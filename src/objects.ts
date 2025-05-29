@@ -8,7 +8,7 @@ import { Question, QuestionType } from "./interfaces/question";
 export function makeBlankQuestion(
     id: number,
     name: string,
-    type: QuestionType,
+    type: QuestionType
 ): Question {
     return {
         id: id,
@@ -18,7 +18,7 @@ export function makeBlankQuestion(
         expected: "",
         options: [],
         points: 1,
-        published: false,
+        published: false
     };
 }
 
@@ -44,10 +44,9 @@ export function isCorrect(question: Question, answer: string): boolean {
 export function isValid(question: Question, answer: string): boolean {
     if (question.type === "short_answer_question") {
         return true;
-    } else if (question.options.includes(answer)) {
-        return true;
+    } else {
+        return question.options.includes(answer);
     }
-    return false;
 }
 
 /**
@@ -57,9 +56,7 @@ export function isValid(question: Question, answer: string): boolean {
  * name "My First Question" would become "9: My First Q".
  */
 export function toShortForm(question: Question): string {
-    const stringId = question.id.toString();
-    const stringName = question.name.substring(0, 10);
-    return stringId + ": " + stringName;
+    return `${question.id}: ${question.name.substring(0, 10)}`;
 }
 
 /**
@@ -80,12 +77,14 @@ export function toShortForm(question: Question): string {
  * Check the unit tests for more examples of what this looks like!
  */
 export function toMarkdown(question: Question): string {
-    let result = `# ${question.name}\n${question.body}`;
+    let markdown = `# ${question.name}\n${question.body}`;
+
     if (question.type === "multiple_choice_question") {
-        result +=
-            "\n" + question.options.map((option) => `- ${option}`).join("\n");
+        markdown +=
+            `\n` + question.options.map((option) => `- ${option}`).join("\n");
     }
-    return result;
+
+    return markdown;
 }
 
 /**
@@ -95,7 +94,7 @@ export function toMarkdown(question: Question): string {
 export function renameQuestion(question: Question, newName: string): Question {
     return {
         ...question,
-        name: newName,
+        name: newName
     };
 }
 
@@ -107,7 +106,7 @@ export function renameQuestion(question: Question, newName: string): Question {
 export function publishQuestion(question: Question): Question {
     return {
         ...question,
-        published: !question.published,
+        published: !question.published
     };
 }
 
@@ -119,14 +118,10 @@ export function publishQuestion(question: Question): Question {
  */
 export function duplicateQuestion(id: number, oldQuestion: Question): Question {
     return {
-        id: id,
-        name: `Copy of ${oldQuestion.name}`,
-        body: oldQuestion.body,
-        type: oldQuestion.type,
-        options: [...oldQuestion.options],
-        expected: oldQuestion.expected,
-        points: oldQuestion.points,
-        published: false,
+        ...oldQuestion, // Copy all properties
+        id: id, // Set new id
+        name: `Copy of ${oldQuestion.name}`, // Modify the name
+        published: false // Reset published to false
     };
 }
 
@@ -139,8 +134,8 @@ export function duplicateQuestion(id: number, oldQuestion: Question): Question {
  */
 export function addOption(question: Question, newOption: string): Question {
     return {
-        ...question,
-        options: [...question.options, newOption],
+        ...question, // Copy all properties
+        options: [...question.options, newOption] // Create a new array with the new option added
     };
 }
 
@@ -156,16 +151,16 @@ export function mergeQuestion(
     id: number,
     name: string,
     contentQuestion: Question,
-    { points }: { points: number },
+    { points }: { points: number }
 ): Question {
     return {
-        id: id,
-        name: name,
-        body: contentQuestion.body,
-        type: contentQuestion.type,
-        options: [...contentQuestion.options],
-        expected: contentQuestion.expected,
-        points: points,
-        published: false,
+        id: id, // Use provided ID
+        name: name, // Use provided name
+        body: contentQuestion.body, // Copy from contentQuestion
+        type: contentQuestion.type, // Copy from contentQuestion
+        options: [...contentQuestion.options], // Create a new copy of options
+        expected: contentQuestion.expected, // Copy from contentQuestion
+        points: points, // Take points from the second argument
+        published: false // Always set to false
     };
 }
